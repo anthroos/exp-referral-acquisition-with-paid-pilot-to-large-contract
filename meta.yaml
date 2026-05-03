@@ -1,0 +1,40 @@
+# Pack metadata — facts only, no interpretation.
+# Author labels (applies_when, summary, grade reason) intentionally absent.
+# The reader's Claude reads `trajectory.anonymized.yaml` and derives match
+# on the fly from the user's situation.
+
+pack:
+  id: 3fc6e8c3-2095-4f4a-b057-602a4e0590ec
+  author: ivan-pasichnyk
+  license: MIT
+  created_at: 2026-05-03T06:40:03Z
+  schema_version: 3
+
+  # Outcome — observable, not interpreted
+  outcome:
+    label: engaged
+    closed_at: day_+65
+
+  # Structural facts — countable, derivable from trajectory.anonymized.yaml
+  duration_days: 65
+  step_count: 21
+
+  # Category tokens that appear in the trajectory (sorted, deduplicated).
+  # Used by readers to filter packs before reading the full timeline.
+  category_tokens:
+    - <counterparty_external_counsel>
+    - <counterparty_legal_signer>
+    - <counterparty_principal>
+    - <counterparty_tech_dm>
+    - <e_signing_platform_local>
+    - <founder>
+    - <own_operator>
+    - <rate:hourly_low>
+    - <us_e_signing>
+    - <value:100k-1m>
+
+  source_pipeline:
+    - prompts/anonymize.md
+    # No extract_experience.md derivation step listed at runtime — this
+    # pack is published raw. The metadata above is structural, not
+    # interpretive.

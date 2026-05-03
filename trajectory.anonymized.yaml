@@ -1,0 +1,215 @@
+trajectory:
+  experience_type: acquisition
+  domain: sales
+  duration_days: 65
+  steps:
+    - relative_day: 0
+      kind: action
+      channel: scheduling_link
+      actors:
+        - role: counterparty_tech_dm
+          seniority: senior
+      content: "Books a discovery call via the author's calendar booking link. Inbound, no prior thread. Counterparty is a sports-vertical broadcast analytics B2B."
+
+    - relative_day: 3
+      kind: meeting
+      channel: video_call
+      actors:
+        - role: counterparty_tech_dm
+          seniority: senior
+        - role: founder
+          seniority: exec
+      content: "Discovery call held. Counterparty technical decision-maker walks through the data annotation problem; volumes are six-figure aggregate over a multi-quarter horizon."
+
+    - relative_day: 8
+      kind: message
+      channel: email
+      actors:
+        - role: founder
+          seniority: exec
+      content: "Founder asks for an NDA from counterparty so technical iteration can begin."
+
+    - relative_day: 9
+      kind: action
+      channel: <us_e_signing>
+      actors:
+        - role: counterparty_legal_signer
+          seniority: exec
+      content: "Counterparty operations/legal lead sends a mutual NDA via the standard US e-signing platform."
+
+    - relative_day: 10
+      kind: decision
+      channel: <us_e_signing>
+      actors:
+        - role: founder
+          seniority: exec
+        - role: counterparty_legal_signer
+          seniority: exec
+      content: "Mutual NDA signed both sides on counterparty's template. Iteration unblocked."
+
+    - relative_day: 11
+      kind: action
+      channel: cloud_drive
+      actors:
+        - role: counterparty_tech_dm
+          seniority: senior
+      content: "Counterparty shares a sample data folder + initial scope document outlining multi-sport coverage and a frame-count target in the low-seven-figure range across multiple verticals."
+
+    - relative_day: 14
+      kind: action
+      channel: cloud_drive
+      actors:
+        - role: own_operator
+          seniority: senior
+      content: "Author's operations lead begins free pilot labeling on the sample data. No invoice — implicit deal: prove quality, then commercial."
+
+    - relative_day: 21
+      kind: observation
+      channel: email
+      actors:
+        - role: own_operator
+          seniority: senior
+        - role: counterparty_tech_dm
+          seniority: senior
+      content: "Two-week iteration window. Multiple back-and-forth messages clarifying annotation taxonomy, edge cases, and quality bar. Throughput math gets refined inside the team."
+
+    - relative_day: 30
+      kind: message
+      channel: email
+      actors:
+        - role: counterparty_tech_dm
+          seniority: senior
+      content: "Counterparty asks for a cost estimate — explicit signal that pilot deliverables are acceptable and conversation is moving toward commercial."
+
+    - relative_day: 33
+      kind: action
+      channel: scheduling_link
+      actors:
+        - role: founder
+          seniority: exec
+      content: "Pricing call scheduled."
+
+    - relative_day: 35
+      kind: meeting
+      channel: video_call
+      actors:
+        - role: founder
+          seniority: exec
+        - role: own_operator
+          seniority: senior
+        - role: counterparty_tech_dm
+          seniority: senior
+      content: "Pricing call held. Rate aligned at <rate:hourly_low>. Aggregate value lands in the <value:100k-1m> range based on throughput math from the pilot."
+
+    - relative_day: 43
+      kind: message
+      channel: email
+      actors:
+        - role: founder
+          seniority: exec
+      content: "Author sends operational follow-up — clarifies billing cadence, payment terms, contract draft timing. Pushes the deal forward without a hard ask."
+
+    - relative_day: 52
+      kind: message
+      channel: email
+      actors:
+        - role: counterparty_tech_dm
+          seniority: senior
+      content: "Counterparty technical DM: 'intend to move forward.' Asks the author to send a contract draft."
+
+    - relative_day: 52
+      kind: action
+      channel: email
+      actors:
+        - role: founder
+          seniority: exec
+      content: "Author sends draft Service Agreement (own template), counterparty entity name and address fields filled, money/scope sections aligned with pricing call output."
+
+    - relative_day: 56
+      kind: message
+      channel: email
+      actors:
+        - role: founder
+          seniority: exec
+      content: "Author follow-up — short message chasing review status without pressure."
+
+    - relative_day: 56
+      kind: message
+      channel: email
+      actors:
+        - role: counterparty_legal_signer
+          seniority: exec
+      content: "Counterparty legal signer responds same day: 'reviewing with counsel this week.' Sets the rebound timeline."
+
+    - relative_day: 60
+      kind: message
+      channel: email
+      actors:
+        - role: counterparty_external_counsel
+          seniority: senior
+        - role: counterparty_legal_signer
+          seniority: exec
+      content: "External counsel returns redlines on the Service Agreement. Volume is moderate (multiple insertions + several deletions). Tone is standard counsel-driven adjustments, not a re-negotiation of commercial terms."
+
+    - relative_day: 61
+      kind: decision
+      channel: email
+      actors:
+        - role: founder
+          seniority: exec
+      content: "Author accepts all redlines without a counter — sub-12-hour turnaround. No principle-of-the-thing pushback on items that don't change the commercial substance."
+
+    - relative_day: 61
+      kind: action
+      channel: <us_e_signing>
+      actors:
+        - role: counterparty_legal_signer
+          seniority: exec
+      content: "Counterparty legal signer sends a fresh <us_e_signing> envelope with the revised Service Agreement, ready for both signatures."
+
+    - relative_day: 62
+      kind: action
+      channel: <us_e_signing>
+      actors:
+        - role: founder
+          seniority: exec
+      content: "Author signs from his side, late evening local time."
+
+    - relative_day: 65
+      kind: decision
+      channel: <us_e_signing>
+      actors:
+        - role: counterparty_principal
+          seniority: exec
+      content: "Counterparty principal (CEO) provides the final signature. Service Agreement now fully executed. Deal commercial close is concrete; production work has not started; first invoice not yet issued."
+
+  notes: |
+    Counterparty is a sports-vertical broadcast analytics B2B operating in <US_jurisdiction>. The
+    sports vertical itself is a relatively small market; specific sport names, exact frame counts,
+    and the counterparty's parent legal entity are deliberately abstracted to category tokens to
+    satisfy the reverse-identification rule (the literal combination of "sports broadcast analytics"
+    + specific frame volumes + named sports + named counsel firm would have <100 plausible matches
+    globally).
+
+    Outcome at day +65 is "fully executed contract" — the CRM lead.stage at trajectory close is
+    `engaged` (not `won`), because production has not started and no invoices have been issued.
+    The terminal step is the counterparty principal's signature; the first kickoff email and the
+    awaited William slot proposal happen AFTER day +65 and are deliberately out of pack scope
+    (separate "delivery" arc, not yet documented).
+
+    Eight outbound messages from the author side between day +15 and day +28 are summarized into
+    one "two-week iteration" observation step rather than enumerated, because the iteration
+    content is mostly taxonomy clarifications that don't move the commercial arc. Their absence
+    from individual rows is a compression decision, not a source-extraction gap.
+
+    Pricing band tokens (<rate:hourly_low>, <value:100k-1m>) describe magnitude class without
+    revealing the literal $5/hr rate or the $125K-$375K aggregate. Reader's Claude can match on
+    "low hourly band" against the user's situation regardless of currency or local market rates.
+
+    The redline volume at day +60 is described as "moderate" rather than with literal counts
+    (which would identify counsel firm style). This is a deliberate generalization beyond what
+    the upstream `prompts/anonymize.md` in the OpenExp engine repo prescribes.
+
+    Custom kind/channel values (`scheduling_link`, `video_call`, `cloud_drive`) extend the v3
+    schema enums per the same pattern as the existing Norda pack. The `<us_e_signing>` channel
+    token is consistent with Norda's `<e_signing_platform_local>` style.
