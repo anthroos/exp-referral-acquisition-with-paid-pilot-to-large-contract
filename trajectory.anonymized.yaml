@@ -35,7 +35,12 @@ trajectory:
       actors:
         - role: counterparty_legal_signer
           seniority: exec
-      content: "Counterparty operations/legal lead sends a mutual NDA via the standard US e-signing platform."
+      tool: Bash
+      commands:
+        - "<gmail_read_script> 20 'from:<counterparty_tech_email> OR to:<counterparty_tech_email>'"
+        - "grep -i '<counterparty_slug>' <crm_dir>/leads.csv 2>/dev/null"
+        - "grep -i '<counterparty_slug>' <pm_dir>/pm_tasks_master.csv"
+      content: "Counterparty operations/legal lead sends a mutual NDA via the standard US e-signing platform. Author confirms via Gmail read pass + cross-references CRM rows for the deal — the inbox + CRM are the source of truth, no separate notification channel."
 
     - relative_day: 10
       kind: decision
@@ -71,7 +76,12 @@ trajectory:
           seniority: senior
         - role: counterparty_tech_dm
           seniority: senior
-      content: "Two-week iteration window. Multiple back-and-forth messages clarifying annotation taxonomy, edge cases, and quality bar. Throughput math gets refined inside the team."
+      tool: Bash
+      commands:
+        - "<gmail_read_script> 15 'from:<counterparty_tech_email> OR to:<counterparty_tech_email>'"
+        - "<gmail_read_script> 10 'in:sent {to:<counterparty_tech_email> OR to:<counterparty_intro_email>}'"
+        - "<gmail_read_script> 1 'from:<counterparty_tech_email>' | grep -A 50 'Preview:'"
+      content: "Two-week iteration window. Multiple back-and-forth messages clarifying annotation taxonomy, edge cases, and quality bar. Throughput math gets refined inside the team. Author runs Gmail read passes through the period to track counterparty's clarifying questions and own team's responses; no formal channel separation."
 
     - relative_day: 30
       kind: message
@@ -123,7 +133,11 @@ trajectory:
       actors:
         - role: founder
           seniority: exec
-      content: "Author sends draft Service Agreement (own template), counterparty entity name and address fields filled, money/scope sections aligned with pricing call output."
+      tool: Edit
+      files_touched:
+        - <home_dir>/welababeldata/docs/contracts/<counterparty_slug>_ServiceAgreement_draft.md
+        - <home_dir>/welababeldata/docs/proposals/<counterparty_slug>_ProposalDraft.md
+      content: "Author sends draft Service Agreement (own template), counterparty entity name and address fields filled, money/scope sections aligned with pricing call output. Drafting day shows ~29 sub-events (Edit + Write + Bash) — multi-pass adjustment of clauses, currency table, scope schedule, and the cover-email body before send."
 
     - relative_day: 56
       kind: message
@@ -131,7 +145,12 @@ trajectory:
       actors:
         - role: founder
           seniority: exec
-      content: "Author follow-up — short message chasing review status without pressure."
+      tool: Bash
+      commands:
+        - "<gmail_send_script> --to <counterparty_intro_email> --cc <counterparty_tech_email>,<own_team_email> --subject 'Re: ...' --body '<short follow-up body>' --dry-run"
+        - "<gmail_send_script> --to <counterparty_intro_email> --cc <counterparty_tech_email>,<own_team_email> --subject 'Re: ...' --body '<short follow-up body>'"
+        - "grep -E '<counterparty_slug>|<counterparty_principal>' <crm_dir>/activities.csv | tail -10"
+      content: "Author follow-up — short message chasing review status without pressure. Author dry-runs the message via the Gmail send script before live-send, then logs an activity row to the CRM activities CSV."
 
     - relative_day: 56
       kind: message
@@ -181,7 +200,16 @@ trajectory:
       actors:
         - role: counterparty_principal
           seniority: exec
-      content: "Counterparty principal (CEO) provides the final signature. Service Agreement now fully executed. Deal commercial close is concrete; production work has not started; first invoice not yet issued."
+      tool: Bash
+      commands:
+        - "python3 -c 'import pandas as pd; people = pd.read_csv(\"contacts/people.csv\"); leads = pd.read_csv(\"relationships/leads.csv\"); ...'"
+        - "grep '<crm_deal_id>' <crm_dir>/relationships/deals.csv"
+        - "python3 << 'EOF' \\\\n# add Alex-Kerr-class principal contact row + flip lead.stage to engaged + log signing activity\\\\nimport csv, pandas as pd\\\\nfrom datetime import date\\\\nEOF"
+      files_touched:
+        - <crm_dir>/contacts/people.csv
+        - <crm_dir>/relationships/leads.csv
+        - <crm_dir>/activities.csv
+      content: "Counterparty principal (CEO) provides the final signature. Service Agreement now fully executed. Deal commercial close is concrete; production work has not started; first invoice not yet issued. Author updates CRM in a single Python pass — adds the principal as a new contact row, flips lead.stage to 'engaged', logs the signing as an activity."
 
   notes: |
     Counterparty is a sports-vertical broadcast analytics B2B operating in <US_jurisdiction>. The
@@ -213,3 +241,30 @@ trajectory:
     Custom kind/channel values (`scheduling_link`, `video_call`, `cloud_drive`) extend the v3
     schema enums per the same pattern as the existing Norda pack. The `<us_e_signing>` channel
     token is consistent with Norda's `<e_signing_platform_local>` style.
+
+dependencies:
+  runtime:
+    cli_tools:
+      - name: gh
+        install: "brew install gh"
+        docs: "https://cli.github.com/"
+      - name: python3 (3.10+)
+        install: "preinstalled on macOS/Linux"
+        docs: "https://www.python.org/"
+      - name: pandas (Python lib)
+        install: "pip install pandas"
+        docs: "https://pandas.pydata.org/"
+    external_accounts:
+      - "Gmail account with Google API credentials (for the inbox-read and inbox-send helper scripts)"
+      - "US Docusign-class e-signing platform account (counterparty's preferred — author signs from any device)"
+      - "CRM as CSV files (companies, people, activities, relationships/leads, relationships/deals) or your equivalent system of record for the deal"
+      - "Cloud-drive (Google Drive class) for receiving counterparty's sample data folder"
+    claude_skills:
+      - name: openexp-use
+        source: "https://github.com/anthroos/claude-skills/tree/main/skills/core/openexp-use"
+        install_cmd: "ln -s ~/claude-skills/skills/core/openexp-use ~/.claude/skills/openexp-use"
+    own_tooling:
+      - name: gmail-read helper
+        purpose: "Python wrapper around Gmail API to read threads by sender/subject filter; appears as <gmail_read_script> in step commands. Reader can substitute any Gmail API client."
+      - name: gmail-send helper
+        purpose: "Python wrapper around Gmail API for outbound mail with --dry-run flag; appears as <gmail_send_script>. Substitutable."

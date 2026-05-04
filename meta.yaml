@@ -8,7 +8,8 @@ pack:
   author: ivan-pasichnyk
   license: MIT
   created_at: 2026-05-03T06:40:03Z
-  schema_version: 3
+  upgraded_at: 2026-05-04T01:30:00Z
+  schema_version: 4
 
   # Outcome — observable, not interpreted
   outcome:
@@ -19,19 +20,59 @@ pack:
   duration_days: 65
   step_count: 21
 
-  # Category tokens that appear in the trajectory (sorted, deduplicated).
-  # Used by readers to filter packs before reading the full timeline.
+  # Category tokens that appear anywhere in the anonymized artifact
+  # (trajectory step content, actor roles, commands, files_touched, dependencies).
+  # Sorted, deduplicated.
   category_tokens:
     - <counterparty_external_counsel>
+    - <counterparty_intro_email>
     - <counterparty_legal_signer>
     - <counterparty_principal>
+    - <counterparty_slug>
     - <counterparty_tech_dm>
+    - <counterparty_tech_email>
+    - <crm_deal_id>
+    - <crm_dir>
     - <e_signing_platform_local>
     - <founder>
+    - <gmail_read_script>
+    - <gmail_send_script>
+    - <home_dir>
     - <own_operator>
+    - <own_team_email>
+    - <pm_dir>
     - <rate:hourly_low>
     - <us_e_signing>
     - <value:100k-1m>
+
+  # v4: dependency manifest. Copy-through from trajectory.anonymized.yaml's
+  # top-level `dependencies:` section. What a reader needs to REPLAY this arc.
+  dependencies:
+    runtime:
+      cli_tools:
+        - name: gh
+          install: "brew install gh"
+          docs: "https://cli.github.com/"
+        - name: python3 (3.10+)
+          install: "preinstalled on macOS/Linux"
+          docs: "https://www.python.org/"
+        - name: pandas (Python lib)
+          install: "pip install pandas"
+          docs: "https://pandas.pydata.org/"
+      external_accounts:
+        - "Gmail account with Google API credentials (for the inbox-read and inbox-send helper scripts)"
+        - "US Docusign-class e-signing platform account (counterparty's preferred — author signs from any device)"
+        - "CRM as CSV files (companies, people, activities, relationships/leads, relationships/deals) or your equivalent system of record for the deal"
+        - "Cloud-drive (Google Drive class) for receiving counterparty's sample data folder"
+      claude_skills:
+        - name: openexp-use
+          source: "https://github.com/anthroos/claude-skills/tree/main/skills/core/openexp-use"
+          install_cmd: "ln -s ~/claude-skills/skills/core/openexp-use ~/.claude/skills/openexp-use"
+      own_tooling:
+        - name: gmail-read helper
+          purpose: "Python wrapper around Gmail API to read threads by sender/subject filter; appears as <gmail_read_script> in step commands. Reader can substitute any Gmail API client."
+        - name: gmail-send helper
+          purpose: "Python wrapper around Gmail API for outbound mail with --dry-run flag; appears as <gmail_send_script>. Substitutable."
 
   source_pipeline:
     - prompts/anonymize.md
